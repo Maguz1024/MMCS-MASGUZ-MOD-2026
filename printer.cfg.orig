@@ -1,0 +1,194 @@
+[save_variables]
+filename: ~/printer_data/config/variables.cfg
+
+[include mainsail.cfg]
+#[include mainsail.cfg]
+#[include include_macros.cfg] #add macros list
+[respond] #enables"M118" COMANDS para mostrar mensajes
+ 
+# Enable object exclusion
+[exclude_object]
+
+#Enable arcs support
+[gcode_arcs]
+resolution: 0.1
+
+[stepper_x]
+step_pin: PC2
+dir_pin: PB9
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 40
+endstop_pin: ^PA5
+position_endstop: 1
+position_max: 248 #pendiente cambiar a 248 cuando acomode la carcasa
+position_min: -1 #-10
+homing_speed: 50
+
+[stepper_y]
+step_pin: PB8
+dir_pin: PB7
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 40
+endstop_pin: ^PA6
+position_endstop: -4
+position_max: 235
+position_min: -5 #-4
+homing_speed: 50
+
+[stepper_z]
+step_pin: PB6
+dir_pin: !PB5
+enable_pin: !PC3
+microsteps: 16         #formula para calcular pasos en kliper:pasos por giro*micropasos/pasosen marlin (200*16/80)
+rotation_distance: 8
+endstop_pin: probe:z_virtual_endstop  #agregar esta linea de codigo para habilitar e sensor inductivo 
+#endstop_pin: ^!PA7   #se deshabilito (endstop_pin: ^!PA7), porque ahora el pin (^!PA7) se esta usando en la seccion [probe],pin: ^!PA7
+#position_endstop: 0.0
+position_max: 250
+position_min: -4
+
+#--------Nivelacion de cama y sensor------------------------ 
+[probe]
+pin: ^!PA7 #(^!PA7 z-endstop pin, movido aca desde la seccion [stepper_z]
+x_offset: -38
+y_offset:  -4
+speed: 5
+lift_speed: 30.0
+samples: 2
+samples_result: median
+sample_retract_dist: 2
+samples_tolerance: 0.09
+z_offset: 2.309
+
+[bed_mesh]
+speed: 120
+horizontal_move_z: 4
+mesh_min: 5, 10
+mesh_max: 208, 220 #this may need to be calibrated for your individual printer 197, 242
+probe_count: 5,5 #this is the number of probing points on X then Y axis
+mesh_pps: 2,2
+fade_start: 1
+fade_end: 10
+fade_target: 0
+algorithm: bicubic
+bicubic_tension: 0.2
+
+[screws_tilt_adjust]
+screw1: 67, 33
+screw1_name: Front left
+screw2: 247, 33
+screw2_name: Front right
+screw3: 247, 203
+screw3_name: Back right
+screw4: 67, 203
+screw4_name: Back left
+screw_thread: CW-M4
+horizontal_move_z: 10
+speed: 150.
+
+#modi
+[safe_z_home]
+home_xy_position: 117,117
+speed: 50
+z_hop: 5
+z_hop_speed: 15
+
+[extruder] #E0                     ##########-EXTRUSOR-1 CONTROLADO DEFAILT DESDE LA IMPRESORA BOARD-CREALITY-V4.2.2--##########
+max_extrude_only_distance: 120.0
+step_pin: PB4
+dir_pin: PB3
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 7.710  # 34.406
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+heater_pin: PA1
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: PC5
+min_temp: 0
+max_temp: 255
+#pressure_advance: 0.025  #0.025 el mejor valor
+max_extrude_cross_section: 5
+
+[heater_bed]
+heater_pin: PA2
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: PC4
+#control: pid
+# tuned for stock hardware with 50 degree Celsius target
+#pid_Kp: 54.027
+#pid_Ki: 0.770
+#pid_Kd: 948.182
+min_temp: 0
+max_temp: 130
+
+[fan]
+pin: PA0
+
+[mcu]
+serial: /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0
+restart_method: command
+
+[temperature_sensor mcu_temp]
+sensor_type: temperature_mcu
+min_temp: 0
+max_temp: 100
+
+[printer]
+kinematics: cartesian
+max_velocity: 500
+max_accel: 10000
+max_z_velocity: 15
+max_z_accel: 100
+
+#---------------ACELEROMETRO-TEST DE RESONANCIA-------------
+[mcu rpi]
+serial: /tmp/klipper_host_mcu
+
+[temperature_sensor raspberry_pi_3B]   #muestra la temperatura en pantalla klipper en la seccion (temperatura) justp debajo del extrusor.
+sensor_type: temperature_host
+min_temp: 10
+max_temp: 100
+
+[mpu9250]
+i2c_mcu: rpi
+i2c_bus: i2c.1
+
+[resonance_tester]
+accel_chip: mpu9250
+probe_points:
+    117, 117, 20  # an example
+
+[input_shaper]
+shaper_type_x: 3hump_ei
+shaper_freq_x: 82.0
+shaper_type_y: mzv
+shaper_freq_y: 36.6
+
+[display]
+lcd_type: st7920
+cs_pin: PB12
+sclk_pin: PB13
+sid_pin: PB15
+encoder_pins: ^PB14, ^PB10
+click_pin: ^!PB2
+
+
+[include shell_command.cfg]
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 23.614
+#*# pid_ki = 1.141
+#*# pid_kd = 122.201
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 71.109
+#*# pid_ki = 1.140
+#*# pid_kd = 1109.307
+#*#
